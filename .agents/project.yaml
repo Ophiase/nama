@@ -1,0 +1,26 @@
+spec: 1
+
+identity:
+  name: nama
+  author: Ophiase
+  holder: Ophiase
+  nature: open-source
+  visibility: private
+  since: 2026
+
+audience:
+  - Obsidian users who keep links in their notes
+
+lifecycle:
+  stage: draft
+  registries: {}
+  ci:
+    mode: manual
+    activation: consent
+
+agent:
+  autonomy:
+    commit: never
+    push: never
+    version-bump: ask
+    commit-when: gate-passes

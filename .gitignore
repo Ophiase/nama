@@ -1,0 +1,14 @@
+# Local paths, guards and secrets: never committed.
+/.agents/local/
+/projects/
+.env
+.envrc
+
+# Build and toolchain
+node_modules/
+dist/
+.rumdl_cache/
+
+# Editor and OS noise
+.DS_Store
+*.swp

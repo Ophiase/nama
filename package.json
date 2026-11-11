@@ -1,0 +1,11 @@
+{
+  "name": "nama",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@biomejs/biome": "2.6.6",
+    "esbuild": "0.28.2",
+    "obsidian": "1.14.4"
+  }
+}
