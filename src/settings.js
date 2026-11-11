@@ -1,12 +1,20 @@
 import { PluginSettingTab, Setting } from "obsidian";
 
+const SITES =
+  "YouTube|SensCritique|Wikipedia|Wikipédia|IMDb|Reddit|Spotify|Genius|Bandcamp|SoundCloud|GitHub|Medium";
+const VIDEO = String.raw`official\s+(?:music\s+)?(?:video|audio|clip)|(?:music|lyrics?)\s+video|visuali[sz]er|clip\s+officiel`;
+const NOISE = String.raw`official|lyrics?|audio|video|clip|visuali[sz]er|remaster(?:ed)?|\d{4}\s+remaster(?:ed)?|hd|hq|4k|explicit|mv`;
+
 export const DEFAULTS = {
   strip: [
-    "\\s*\\[[^\\]]*\\]",
-    "\\s*【[^】]*】",
-    "\\s*\\((?:official\\s*)?(?:music\\s*)?(?:video|audio|clip|lyrics?|mv|hd|4k)[^)]*\\)",
-    "\\s*[-|–—·]\\s*YouTube\\s*$",
-    "\\s*[-|–—·]\\s*SensCritique\\s*$",
+    String.raw`\s*\[[^\]]*\]`,
+    String.raw`\s*【[^】]*】`,
+    String.raw`\s*#[\p{L}\p{N}_-]+`,
+    String.raw`\s*\p{Extended_Pictographic}`,
+    String.raw`\s*\((?:${NOISE})\b[^)]*\)`,
+    String.raw`\s*(?:[|\-–—·:]\s*)?(?:${VIDEO})\b.*$`,
+    String.raw`\s*[|\-–—·]\s*(?:${SITES})\s*$`,
+    String.raw`^\s*[|\-–—·:]+\s*|\s*[|\-–—·:]+\s*$`,
   ].join("\n"),
 };
 
@@ -34,6 +42,16 @@ export class NamaTab extends PluginSettingTab {
         });
         area.inputEl.rows = 10;
         area.inputEl.cols = 50;
-      });
+      })
+      .addExtraButton((button) =>
+        button
+          .setIcon("reset")
+          .setTooltip("Restore the default patterns")
+          .onClick(async () => {
+            this.plugin.settings.strip = DEFAULTS.strip;
+            await this.plugin.saveData(this.plugin.settings);
+            this.display();
+          }),
+      );
   }
 }

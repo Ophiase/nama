@@ -38,7 +38,7 @@ export function cleanTitle(title, patterns) {
   let clean = title.normalize("NFC");
   for (const pattern of patterns) {
     try {
-      clean = clean.replace(new RegExp(pattern, "gi"), "");
+      clean = clean.replace(new RegExp(pattern, "giu"), "");
     } catch {
       // an invalid pattern is skipped, not fatal
     }
