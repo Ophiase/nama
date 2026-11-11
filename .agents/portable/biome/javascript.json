@@ -1,0 +1,58 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
+  "formatter": {
+    "indentStyle": "space",
+    "lineWidth": 100
+  },
+  "linter": {
+    "rules": {
+      "preset": "recommended",
+      "complexity": {
+        "noExcessiveCognitiveComplexity": {
+          "level": "error",
+          "options": {
+            "maxAllowedComplexity": 6
+          }
+        },
+        "noExcessiveLinesPerFunction": {
+          "level": "error",
+          "options": {
+            "maxLines": 12,
+            "skipBlankLines": true
+          }
+        },
+        "noExcessiveNestedCallbacks": {
+          "level": "error",
+          "options": {
+            "max": 1
+          }
+        },
+        "noForEach": "error",
+        "useMaxParams": {
+          "level": "error",
+          "options": {
+            "max": 3
+          }
+        }
+      },
+      "style": {
+        "noNestedTernary": "error",
+        "noParameterAssign": "error",
+        "noShoutyConstants": "error",
+        "useBlockStatements": "error"
+      },
+      "suspicious": {
+        "noShadow": "error"
+      },
+      "nursery": {
+        "noExcessiveNestedBlocks": {
+          "level": "error",
+          "options": {
+            "max": 2
+          }
+        },
+        "noNestedTemplateLiterals": "error"
+      }
+    }
+  }
+}

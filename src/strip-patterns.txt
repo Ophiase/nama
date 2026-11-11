@@ -1,0 +1,8 @@
+\s*\[[^\]]*\]
+\s*【[^】]*】
+\s*#[\p{L}\p{N}_-]+
+\s*\p{Extended_Pictographic}
+\s*\((?:official|lyrics?|audio|video|clip|visuali[sz]er|remaster(?:ed)?|\d{4}\s+remaster(?:ed)?|hd|hq|4k|explicit|mv)\b[^)]*\)
+\s*(?:[|\-–—·:]\s*)?(?:official\s+(?:music\s+)?(?:video|audio|clip)|(?:music|lyrics?)\s+video|visuali[sz]er|clip\s+officiel)\b.*$
+\s*[|\-–—·]\s*(?:YouTube|SensCritique|Wikipedia|Wikipédia|IMDb|Reddit|Spotify|Genius|Bandcamp|SoundCloud|GitHub|Medium)\s*$
+^\s*[|\-–—·:]+\s*|\s*[|\-–—·:]+\s*$

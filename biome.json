@@ -1,6 +1,7 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
-  "files": { "includes": ["src/**", "*.json"] },
-  "formatter": { "indentStyle": "space", "lineWidth": 100 },
-  "linter": { "rules": { "preset": "none" } }
+  "extends": ["./.agents/portable/biome/javascript.json"],
+  "files": {
+    "includes": ["src/**", "*.json"]
+  }
 }

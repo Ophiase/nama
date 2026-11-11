@@ -28,7 +28,7 @@ check:
 [script("bash")]
 guards:
     status=0
-    for check in markdown french comment-slop hardcoded-url portable biome file-length folder-size yaml-extension; do
+    for check in markdown french comment-slop short-names hardcoded-url portable biome file-length folder-size yaml-extension; do
         just _guard "$check" || status=1
     done
     exit $status
@@ -40,7 +40,7 @@ _guard check:
 [doc("Bundle src/ into dist/main.js")]
 build: check
     npx esbuild src/main.js --bundle --format=cjs --platform=browser --target=es2022 \
-      --external:obsidian --outfile=dist/main.js
+      --external:obsidian --loader:.txt=text --outfile=dist/main.js
 
 [group("build")]
 [doc("Copy the build into $NAMA_VAULT/.obsidian/plugins/nama")]

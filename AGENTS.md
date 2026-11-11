@@ -23,12 +23,19 @@ Rules first, code second. The canon is
 | Path | What it holds |
 | --- | --- |
 | `src/main.js` | the plugin: commands and the editor menu |
+| `src/actions.js` | what each command does |
+| `src/selection.js` | the text a command works on |
 | `src/urls.js` | finding URLs and their spans in a text |
 | `src/title.js` | fetching, decoding and cleaning a page title |
 | `src/settings.js` | the defaults and the settings tab |
+| `src/strip-patterns.txt` | the default strip patterns, one regex per line |
 | `dist/main.js` | the bundle, built, never edited, gitignored |
 
 ## The harness
+
+JavaScript follows
+[.agents/portable/rules/javascript.md](.agents/portable/rules/javascript.md);
+`biome.json` extends its shared config and is never loosened locally.
 
 - `just agent gate` is the one command to declare work done: `just check`,
   then `just guards`.

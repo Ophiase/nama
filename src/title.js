@@ -2,15 +2,19 @@ import { requestUrl } from "obsidian";
 
 const YOUTUBE = /(^|\.)(youtube\.com|youtu\.be)$/;
 
-function decode(buffer, contentType = "") {
-  const bytes = new Uint8Array(buffer);
+function charsetOf(bytes, contentType) {
   const head = new TextDecoder("latin1").decode(bytes.slice(0, 4096));
-  const charset =
+  return (
     /charset=([\w-]+)/i.exec(contentType)?.[1] ??
     /<meta[^>]+charset=["']?([\w-]+)/i.exec(head)?.[1] ??
-    "utf-8";
+    "utf-8"
+  );
+}
+
+function decode(buffer, contentType = "") {
+  const bytes = new Uint8Array(buffer);
   try {
-    return new TextDecoder(charset).decode(bytes);
+    return new TextDecoder(charsetOf(bytes, contentType)).decode(bytes);
   } catch {
     return new TextDecoder("utf-8").decode(bytes);
   }
@@ -45,3 +49,15 @@ export function cleanTitle(title, patterns) {
   }
   return clean.replace(/\s+/g, " ").trim().replace(/[[\]]/g, "\\$&");
 }
+
+async function fetchCleanTitle(url, patterns) {
+  try {
+    return cleanTitle(await fetchTitle(url), patterns);
+  } catch {
+    return "";
+  }
+}
+
+/** The cleaned title of each span, or "" where fetching it failed. */
+export const fetchCleanTitles = (spans, patterns) =>
+  Promise.all(spans.map((span) => fetchCleanTitle(span.url, patterns)));
