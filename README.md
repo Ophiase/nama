@@ -2,7 +2,7 @@
 
 [![Kanon](https://img.shields.io/badge/%3C%3E-Kanon-blueviolet.svg)](.agents/kanon.md)
 
-An simple Obsidian plugin: name the URLs of a selection, strip the noise from their
+A simple Obsidian plugin: name the URLs of a selection, strip the noise from their
 titles, copy the URLs out.
 
 ## Commands
@@ -29,3 +29,14 @@ cp .env.example .env    # set NAMA_VAULT
 just setup
 just install
 ```
+
+## Make it yours
+
+> [!TIP]
+> Built for one vault and one pair of hands. Feel free to clone it and adapt
+> it to your needs with your agents: the rules they follow are already in
+> [AGENTS.md](AGENTS.md) ;)
+
+## License
+
+[Apache 2.0](LICENSE)
