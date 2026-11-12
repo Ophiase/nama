@@ -1,7 +1,9 @@
 import { Notice } from "obsidian";
-import { Selection } from "./selection.js";
+import { Anchor } from "./editor/anchor.js";
+import { Selection } from "./editor/selection.js";
+import { enterInsert, leaveVisual } from "./editor/vim.js";
 import { fetchCleanTitles } from "./title.js";
-import { bareUrls, linked, urlsIn } from "./urls.js";
+import { bareUrls, linked, soleUrl, urlsIn } from "./urls.js";
 
 const say = (message) => new Notice(`Nama: ${message}`);
 
@@ -56,4 +58,28 @@ export async function copyUrls(editor, limit) {
     return;
   }
   await copy(urls);
+}
+
+async function clipboardUrl() {
+  const text = await navigator.clipboard.readText().catch(() => "");
+  return soleUrl(text);
+}
+
+function placeCursor(editor, offset) {
+  const cursor = editor.offsetToPos(offset);
+  editor.setCursor(cursor);
+  editor.focus();
+}
+
+export async function insertUrl(editor) {
+  const url = await clipboardUrl();
+  const anchor = new Anchor(editor);
+  leaveVisual(editor);
+  const link = anchor.wrap(url ?? "");
+  if (url) {
+    placeCursor(editor, link.end);
+    return;
+  }
+  placeCursor(editor, link.paren);
+  enterInsert(editor);
 }

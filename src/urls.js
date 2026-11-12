@@ -16,6 +16,14 @@ export const findUrls = (text) => [...text.matchAll(TOKEN)].map(spanOf);
 
 export const urlsIn = (text) => findUrls(text).map((span) => span.url);
 
+/** The URL `text` is made of, alone, or null. */
+export function soleUrl(text) {
+  const trimmed = text.trim();
+  const [span, ...rest] = findUrls(trimmed);
+  const whole = span && rest.length === 0 && span.start === 0 && span.end === trimmed.length;
+  return whole ? span.url : null;
+}
+
 export const bareUrls = (text) => findUrls(text).filter((span) => span.bare);
 
 /** `text` with each bare span replaced by a link to its title, when one was found. */

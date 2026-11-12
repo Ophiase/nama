@@ -24,7 +24,9 @@ Rules first, code second. The canon is
 | --- | --- |
 | `src/main.js` | the plugin: commands and the editor menu |
 | `src/actions.js` | what each command does |
-| `src/selection.js` | the text a command works on |
+| `src/editor/selection.js` | the text a command works on |
+| `src/editor/anchor.js` | the text a link is wrapped around |
+| `src/editor/vim.js` | the vim mode, which the Obsidian API does not expose |
 | `src/urls.js` | finding URLs and their spans in a text |
 | `src/title.js` | fetching, decoding and cleaning a page title |
 | `src/settings.js` | the defaults and the settings tab |

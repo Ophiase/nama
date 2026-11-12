@@ -1,6 +1,6 @@
 // Nama: name the URLs of a selection, copy them out. <>
 import { Plugin } from "obsidian";
-import { copyUrls, nameUrls } from "./actions.js";
+import { copyUrls, insertUrl, nameUrls } from "./actions.js";
 import { DEFAULTS, NamaTab, patterns } from "./settings.js";
 
 const ACTIONS = [
@@ -9,6 +9,12 @@ const ACTIONS = [
     name: "Name URLs",
     icon: "link",
     run: (nama, editor) => nameUrls(editor, patterns(nama.settings)),
+  },
+  {
+    id: "insert-url",
+    name: "Insert URL",
+    icon: "link-2",
+    run: (_nama, editor) => insertUrl(editor),
   },
   {
     id: "copy-first-url",
