@@ -5,5 +5,6 @@
   "minAppVersion": "1.14.0",
   "description": "Name the URLs of a selection with their page titles, embed them, copy them out.",
   "author": "Phorcys",
+  "authorUrl": "https://github.com/Ophiase",
   "isDesktopOnly": false
 }
