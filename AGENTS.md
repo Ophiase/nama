@@ -23,14 +23,13 @@ Rules first, code second. The canon is
 | Path | What it holds |
 | --- | --- |
 | `src/main.ts` | the plugin: commands and the editor menu |
-| `src/actions.ts` | what each command does |
-| `src/editor/selection.ts` | the text a command works on |
-| `src/editor/anchor.ts` | the text a link is wrapped around |
-| `src/editor/vim.ts` | the vim mode, which the Obsidian API does not expose |
-| `src/urls.ts` | finding URLs and their spans in a text |
-| `src/title.ts` | fetching, decoding and cleaning a page title |
-| `src/settings.ts` | the defaults and the settings tab |
-| `src/strip-patterns.txt` | the default strip patterns, one regex per line |
+| `src/actions/` | what each command does, one file per command |
+| `src/editor/` | the region of the editor a command works on, and vim |
+| `src/urls.ts` | finding URLs, their form and their spans in a text |
+| `src/markdown.ts` | writing links and applying edits to a text |
+| `src/title/` | fetching a page title, and the patterns that clean it |
+| `src/title/strip-patterns.txt` | the default strip patterns, one regex per line |
+| `src/settings.ts` | the saved settings and the settings tab |
 | `types/` | declarations for what TypeScript cannot see: `.txt` imports |
 | `dist/main.js` | the bundle, built, never edited, gitignored |
 

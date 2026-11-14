@@ -1,14 +1,19 @@
 // Nama: name the URLs of a selection, copy them out. <>
 import { type Editor, type Menu, type MenuItem, Plugin } from "obsidian";
 import { copyUrls, insertUrl, nameUrls } from "./actions";
-import { DEFAULTS, type NamaSettings, NamaTab } from "./settings";
+import { type NamaSettings, NamaTab, settingsFrom } from "./settings";
 import { StripPatterns } from "./title";
 
+interface Context {
+  readonly editor: Editor;
+  readonly strip: StripPatterns;
+}
+
 interface Action {
-  id: string;
-  name: string;
-  icon: string;
-  run: (nama: Nama, editor: Editor) => Promise<void>;
+  readonly id: string;
+  readonly name: string;
+  readonly icon: string;
+  readonly run: (context: Context) => Promise<void>;
 }
 
 const ACTIONS: readonly Action[] = [
@@ -16,34 +21,33 @@ const ACTIONS: readonly Action[] = [
     id: "name-urls",
     name: "Name URLs",
     icon: "link",
-    run: (nama, editor) => nameUrls(editor, StripPatterns.parse(nama.settings.strip)),
+    run: ({ editor, strip }) => nameUrls(editor, strip),
   },
   {
     id: "insert-url",
     name: "Insert URL",
     icon: "link-2",
-    run: (_nama, editor) => insertUrl(editor),
+    run: ({ editor }) => insertUrl(editor),
   },
   {
     id: "copy-first-url",
     name: "Copy first URL",
     icon: "copy",
-    run: (_nama, editor) => copyUrls(editor, 1),
+    run: ({ editor }) => copyUrls(editor, 1),
   },
   {
     id: "copy-all-urls",
     name: "Copy all URLs",
     icon: "copy",
-    run: (_nama, editor) => copyUrls(editor),
+    run: ({ editor }) => copyUrls(editor),
   },
 ];
 
 export default class Nama extends Plugin {
-  override settings: NamaSettings = { ...DEFAULTS };
+  override settings: NamaSettings = settingsFrom(null);
 
   override async onload() {
-    const saved: Partial<NamaSettings> | null = await this.loadData();
-    this.settings = { ...DEFAULTS, ...saved };
+    this.settings = settingsFrom(await this.loadData());
     this.addSettingTab(new NamaTab(this.app, this));
     this.registerCommands();
     this.registerEvent(
@@ -51,9 +55,19 @@ export default class Nama extends Plugin {
     );
   }
 
+  async saveStrip(strip: string) {
+    this.settings = { ...this.settings, strip };
+    await this.saveData(this.settings);
+  }
+
+  private context(editor: Editor): Context {
+    const strip = StripPatterns.parse(this.settings.strip);
+    return { editor, strip };
+  }
+
   private registerCommands() {
     for (const { id, name, run } of ACTIONS) {
-      this.addCommand({ id, name, editorCallback: (editor) => run(this, editor) });
+      this.addCommand({ id, name, editorCallback: (editor) => run(this.context(editor)) });
     }
   }
 
@@ -67,6 +81,6 @@ export default class Nama extends Plugin {
     item
       .setTitle(name)
       .setIcon(icon)
-      .onClick(() => run(this, editor));
+      .onClick(() => run(this.context(editor)));
   }
 }

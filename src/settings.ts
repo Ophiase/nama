@@ -9,10 +9,15 @@ import type Nama from "./main";
 import { StripPatterns } from "./title";
 
 export interface NamaSettings {
-  strip: string;
+  readonly strip: string;
 }
 
-export const DEFAULTS: Readonly<NamaSettings> = { strip: StripPatterns.defaults };
+/** The settings `saved` holds, the defaults for what it lacks or holds wrong. */
+export function settingsFrom(saved: unknown): NamaSettings {
+  const strip =
+    typeof saved === "object" && saved !== null && "strip" in saved ? saved.strip : null;
+  return { strip: typeof strip === "string" ? strip : StripPatterns.defaults };
+}
 
 export class NamaTab extends PluginSettingTab {
   constructor(
@@ -32,7 +37,7 @@ export class NamaTab extends PluginSettingTab {
   }
 
   private patternsArea(area: TextAreaComponent) {
-    area.setValue(this.plugin.settings.strip).onChange((value) => this.saveStrip(value));
+    area.setValue(this.plugin.settings.strip).onChange((value) => this.plugin.saveStrip(value));
     area.inputEl.rows = 10;
     area.inputEl.cols = 50;
   }
@@ -44,13 +49,8 @@ export class NamaTab extends PluginSettingTab {
       .onClick(() => this.reset());
   }
 
-  private async saveStrip(value: string) {
-    this.plugin.settings.strip = value;
-    await this.plugin.saveData(this.plugin.settings);
-  }
-
   private async reset() {
-    await this.saveStrip(DEFAULTS.strip);
+    await this.plugin.saveStrip(StripPatterns.defaults);
     this.display();
   }
 }
