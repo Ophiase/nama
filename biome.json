@@ -2,6 +2,6 @@
   "$schema": "https://biomejs.dev/schemas/2.6.6/schema.json",
   "extends": ["./.agents/portable/biome/javascript.json"],
   "files": {
-    "includes": ["src/**", "*.json"]
+    "includes": ["src/**", "types/**", "*.json"]
   }
 }

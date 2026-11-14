@@ -56,7 +56,7 @@ A profile is chosen from the file extension. The two columns that move are
 `HEADER` and the volume caps, because what they forbid is conventional in one
 language and slop in another.
 
-| | `.py` | `.yaml` `.yml` | `.just` | `.sh` | `.js` | `.tf` | `.rs` |
+| | `.py` | `.yaml` `.yml` | `.just` | `.sh` | `.js` `.ts` | `.tf` | `.rs` |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | `BANNER` `STEP` `NARRATIVE` `VARIABLE` `INLINE` `REMOTE` | yes | yes | yes | yes | yes | yes | yes |
 | `HEADER` | yes | no | no | no | no | no | no |
@@ -69,9 +69,9 @@ In Rust, `///` and `//!` are documentation, not comments: they are judged by
 
 `HEADER` is Python's alone because Python has somewhere better to put it: a
 module docstring, which the same hook caps at three lines. Elsewhere the cap
-on a leading block is `BLOCK`, with one exception — a `.sh` or `.js` file may
-open with a header of any length, since that is how a reader learns what the
-file is for before reading any of it.
+on a leading block is `BLOCK`, with one exception — a `.sh`, `.js` or `.ts`
+file may open with a header of any length, since that is how a reader learns
+what the file is for before reading any of it.
 
 Python has no `BLOCK` and only a soft `DENSITY` note because its own shapes
 already catch what they would: a comment there sits above an assignment or

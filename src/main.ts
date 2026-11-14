@@ -1,9 +1,16 @@
 // Nama: name the URLs of a selection, copy them out. <>
-import { Plugin } from "obsidian";
-import { copyUrls, insertUrl, nameUrls } from "./actions.js";
-import { DEFAULTS, NamaTab, patterns } from "./settings.js";
+import { type Editor, type Menu, type MenuItem, Plugin } from "obsidian";
+import { copyUrls, insertUrl, nameUrls } from "./actions";
+import { DEFAULTS, type NamaSettings, NamaTab, patterns } from "./settings";
 
-const ACTIONS = [
+interface Action {
+  id: string;
+  name: string;
+  icon: string;
+  run: (nama: Nama, editor: Editor) => Promise<void>;
+}
+
+const ACTIONS: readonly Action[] = [
   {
     id: "name-urls",
     name: "Name URLs",
@@ -31,8 +38,11 @@ const ACTIONS = [
 ];
 
 export default class Nama extends Plugin {
-  async onload() {
-    this.settings = { ...DEFAULTS, ...(await this.loadData()) };
+  override settings: NamaSettings = { ...DEFAULTS };
+
+  override async onload() {
+    const saved: Partial<NamaSettings> | null = await this.loadData();
+    this.settings = { ...DEFAULTS, ...saved };
     this.addSettingTab(new NamaTab(this.app, this));
     this.registerCommands();
     this.registerEvent(
@@ -40,19 +50,19 @@ export default class Nama extends Plugin {
     );
   }
 
-  registerCommands() {
+  private registerCommands() {
     for (const { id, name, run } of ACTIONS) {
       this.addCommand({ id, name, editorCallback: (editor) => run(this, editor) });
     }
   }
 
-  fillMenu(menu, editor) {
+  private fillMenu(menu: Menu, editor: Editor) {
     for (const action of ACTIONS) {
       menu.addItem((item) => this.menuItem(item, action, editor));
     }
   }
 
-  menuItem(item, { name, icon, run }, editor) {
+  private menuItem(item: MenuItem, { name, icon, run }: Action, editor: Editor) {
     item
       .setTitle(name)
       .setIcon(icon)

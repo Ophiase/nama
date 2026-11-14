@@ -22,22 +22,26 @@ Rules first, code second. The canon is
 
 | Path | What it holds |
 | --- | --- |
-| `src/main.js` | the plugin: commands and the editor menu |
-| `src/actions.js` | what each command does |
-| `src/editor/selection.js` | the text a command works on |
-| `src/editor/anchor.js` | the text a link is wrapped around |
-| `src/editor/vim.js` | the vim mode, which the Obsidian API does not expose |
-| `src/urls.js` | finding URLs and their spans in a text |
-| `src/title.js` | fetching, decoding and cleaning a page title |
-| `src/settings.js` | the defaults and the settings tab |
+| `src/main.ts` | the plugin: commands and the editor menu |
+| `src/actions.ts` | what each command does |
+| `src/editor/selection.ts` | the text a command works on |
+| `src/editor/anchor.ts` | the text a link is wrapped around |
+| `src/editor/vim.ts` | the vim mode, which the Obsidian API does not expose |
+| `src/urls.ts` | finding URLs and their spans in a text |
+| `src/title.ts` | fetching, decoding and cleaning a page title |
+| `src/settings.ts` | the defaults and the settings tab |
 | `src/strip-patterns.txt` | the default strip patterns, one regex per line |
+| `types/` | declarations for what TypeScript cannot see: `.txt` imports |
 | `dist/main.js` | the bundle, built, never edited, gitignored |
 
 ## The harness
 
-JavaScript follows
-[.agents/portable/rules/javascript.md](.agents/portable/rules/javascript.md);
-`biome.json` extends its shared config and is never loosened locally.
+TypeScript follows
+[.agents/portable/rules/javascript.md](.agents/portable/rules/javascript.md)
+and [.agents/portable/rules/typescript.md](.agents/portable/rules/typescript.md);
+`biome.json` extends the shared config and `tsconfig.json` is strict, and
+neither is loosened locally. A type the Obsidian API lacks is declared, as in
+`src/editor/vim.ts`.
 
 - `just agent gate` is the one command to declare work done: `just check`,
   then `just guards`.

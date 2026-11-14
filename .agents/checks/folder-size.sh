@@ -11,7 +11,7 @@ declare -A seen=()
 for file in "$@"; do
   case $file in
     .agents/*) continue ;;
-    *.rs | *.js | *.py) ;;
+    *.rs | *.js | *.ts | *.py) ;;
     *) continue ;;
   esac
   folder=$(dirname "$file")

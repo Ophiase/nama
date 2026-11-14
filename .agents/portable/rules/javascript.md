@@ -1,8 +1,8 @@
 # JavaScript
 
-How JavaScript code in this repository is expected to look. The same taste as
-[python.md](python.md) and [rust.md](rust.md), in JavaScript's own tools;
-comments follow [comments.md](comments.md).
+How JavaScript and TypeScript code in this repository is expected to look.
+The same taste as [python.md](python.md) and [rust.md](rust.md), in
+JavaScript's own tools; comments follow [comments.md](comments.md).
 
 ## Lints carry the rules
 
@@ -18,6 +18,8 @@ project's `biome.json` only extends it and says which files it covers:
   intermediate value is never the thing to save.
 - No nested ternary, no template literal inside another, no
   `forEach`, no reassigned parameter, no shadowed name, braces on every `if`.
+- In TypeScript, `noExplicitAny` and `noNonNullAssertion` are errors; what
+  else the types bring is in [typescript.md](typescript.md).
 - [short-names.sh](../checks/short-names.sh) is the `min_ident_chars` Biome
   lacks: no single-letter names, not even `i`, `u` or `m`.
 

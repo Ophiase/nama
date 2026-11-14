@@ -1,8 +1,13 @@
 import { requestUrl } from "obsidian";
+import type { UrlSpan } from "./urls";
 
 const YOUTUBE = /(^|\.)(youtube\.com|youtu\.be)$/;
 
-function charsetOf(bytes, contentType) {
+interface OEmbed {
+  title?: string;
+}
+
+function charsetOf(bytes: Uint8Array, contentType: string) {
   const head = new TextDecoder("latin1").decode(bytes.slice(0, 4096));
   return (
     /charset=([\w-]+)/i.exec(contentType)?.[1] ??
@@ -11,7 +16,7 @@ function charsetOf(bytes, contentType) {
   );
 }
 
-function decode(buffer, contentType = "") {
+function decode(buffer: ArrayBuffer, contentType = "") {
   const bytes = new Uint8Array(buffer);
   try {
     return new TextDecoder(charsetOf(bytes, contentType)).decode(bytes);
@@ -20,13 +25,15 @@ function decode(buffer, contentType = "") {
   }
 }
 
-async function youtubeTitle(url) {
+async function youtubeTitle(url: string) {
   const endpoint = "https://www.youtube.com/oembed"; // hardcoded-url: YouTube's one public oEmbed endpoint
   const query = new URLSearchParams({ format: "json", url });
-  return (await requestUrl({ url: `${endpoint}?${query}` })).json.title ?? "";
+  const response = await requestUrl({ url: `${endpoint}?${query}` });
+  const body: OEmbed = response.json;
+  return body.title ?? "";
 }
 
-async function pageTitle(url) {
+async function pageTitle(url: string) {
   const response = await requestUrl({ url, headers: { "Accept-Language": "fr,en;q=0.8" } });
   const html = decode(response.arrayBuffer, response.headers["content-type"]);
   const doc = new DOMParser().parseFromString(html, "text/html");
@@ -34,11 +41,11 @@ async function pageTitle(url) {
   return (og || doc.title || "").trim();
 }
 
-export const fetchTitle = (url) =>
+export const fetchTitle = (url: string) =>
   YOUTUBE.test(new URL(url).hostname) ? youtubeTitle(url) : pageTitle(url);
 
 /** Strip every pattern, normalize, escape what would break a markdown link. */
-export function cleanTitle(title, patterns) {
+export function cleanTitle(title: string, patterns: readonly string[]) {
   let clean = title.normalize("NFC");
   for (const pattern of patterns) {
     try {
@@ -50,7 +57,7 @@ export function cleanTitle(title, patterns) {
   return clean.replace(/\s+/g, " ").trim().replace(/[[\]]/g, "\\$&");
 }
 
-async function fetchCleanTitle(url, patterns) {
+async function fetchCleanTitle(url: string, patterns: readonly string[]) {
   try {
     return cleanTitle(await fetchTitle(url), patterns);
   } catch {
@@ -59,5 +66,5 @@ async function fetchCleanTitle(url, patterns) {
 }
 
 /** The cleaned title of each span, or "" where fetching it failed. */
-export const fetchCleanTitles = (spans, patterns) =>
+export const fetchCleanTitles = (spans: readonly UrlSpan[], patterns: readonly string[]) =>
   Promise.all(spans.map((span) => fetchCleanTitle(span.url, patterns)));

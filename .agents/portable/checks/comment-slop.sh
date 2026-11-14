@@ -13,7 +13,7 @@ syntax_for() {
     *.yaml | *.yml) printf yaml ;;
     *.just | justfile | */justfile) printf just ;;
     *.sh) printf shell ;;
-    *.js) printf javascript ;;
+    *.js | *.ts) printf javascript ;;
     *.tf) printf terraform ;;
     *.rs) printf rust ;;
   esac

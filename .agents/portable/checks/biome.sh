@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
 # Usage: biome.sh <file>...
-# Runs biome in each checkout that owns one of the .js arguments, so a worktree
-# lints itself. The scope is biome.json, and the version is the one its
-# $schema names, which `biome migrate` keeps in step. Skipped when npx is not
-# installed. Exits 1 when biome reports anything.
+# Runs biome in each checkout that owns one of the .js or .ts arguments, so a
+# worktree lints itself. The scope is biome.json, and the version is the one
+# its $schema names, which `biome migrate` keeps in step. Skipped when npx is
+# not installed. Exits 1 when biome reports anything.
 set -uo pipefail
 
 command -v npx >/dev/null 2>&1 || exit 0
 
 declare -A roots=()
 for file in "$@"; do
-  [[ -f $file && $file == *.js ]] || continue
+  [[ -f $file && ($file == *.js || $file == *.ts) ]] || continue
   root=$(git -C "$(dirname "$file")" rev-parse --show-toplevel 2>/dev/null) || continue
   [[ -f $root/biome.json ]] && roots[$root]=1
 done

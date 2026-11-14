@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Usage: sonar-heuristic.sh <file>...
-# Reports, on the lines the working tree added to each .py or .js file, the
+# Reports, on the lines the working tree added to each .py, .js or .ts file, the
 # findings SonarQube keeps raising that the linters do not: a fast, dumb
 # pattern match that runs before the scan does. Exits 1 when it reports
 # anything.
@@ -11,7 +11,7 @@ checks=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 report=""
 for file in "$@"; do
   [[ -f $file ]] || continue
-  [[ $file == *.py || $file == *.js ]] || continue
+  [[ $file == *.py || $file == *.js || $file == *.ts ]] || continue
   "$checks/is-ignored.sh" sonar-heuristic "$file" && continue
   added=$("$checks/added-lines.sh" "$file")
   [[ -n $added ]] || continue

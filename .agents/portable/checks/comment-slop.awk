@@ -33,7 +33,7 @@ function scan_remote(number, text,   rest, candidate) {
   rest = text
   sub(/^[ \t]*(#|\/\/|\*)[ \t!]*/, "", rest)
   if (rest ~ /https?:\/\//) return
-  while (match(rest, /[A-Za-z0-9_.\/-]+\.(py|ya?ml|sh|js|md|json|toml|just|sql|html|awk)\y|[A-Za-z_][A-Za-z0-9]*_[A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+|[A-Z][a-z]+[A-Z][A-Za-z0-9]*/)) {
+  while (match(rest, /[A-Za-z0-9_.\/-]+\.(py|ya?ml|sh|js|ts|md|json|toml|just|sql|html|awk)\y|[A-Za-z_][A-Za-z0-9]*_[A-Za-z0-9_]*(\.[A-Za-z0-9_]+)+|[A-Z][a-z]+[A-Z][A-Za-z0-9]*/)) {
     candidate = substr(rest, RSTART, RLENGTH)
     rest = substr(rest, RSTART + RLENGTH)
     if (index(code_text, candidate) == 0) {

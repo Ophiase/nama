@@ -1,21 +1,34 @@
-import { PluginSettingTab, Setting } from "obsidian";
+import {
+  type App,
+  type ExtraButtonComponent,
+  PluginSettingTab,
+  Setting,
+  type TextAreaComponent,
+} from "obsidian";
+import type Nama from "./main";
 import strip from "./strip-patterns.txt";
 
-export const DEFAULTS = { strip: strip.trim() };
+export interface NamaSettings {
+  strip: string;
+}
 
-export const patterns = (settings) =>
+export const DEFAULTS: Readonly<NamaSettings> = { strip: strip.trim() };
+
+export const patterns = (settings: NamaSettings) =>
   settings.strip
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean);
 
 export class NamaTab extends PluginSettingTab {
-  constructor(app, plugin) {
+  private readonly plugin: Nama;
+
+  constructor(app: App, plugin: Nama) {
     super(app, plugin);
     this.plugin = plugin;
   }
 
-  display() {
+  override display() {
     this.containerEl.empty();
     new Setting(this.containerEl)
       .setName("Strip patterns")
@@ -24,25 +37,25 @@ export class NamaTab extends PluginSettingTab {
       .addExtraButton((button) => this.resetButton(button));
   }
 
-  patternsArea(area) {
+  private patternsArea(area: TextAreaComponent) {
     area.setValue(this.plugin.settings.strip).onChange((value) => this.saveStrip(value));
     area.inputEl.rows = 10;
     area.inputEl.cols = 50;
   }
 
-  resetButton(button) {
+  private resetButton(button: ExtraButtonComponent) {
     button
       .setIcon("reset")
       .setTooltip("Restore the default patterns")
       .onClick(() => this.reset());
   }
 
-  async saveStrip(value) {
+  private async saveStrip(value: string) {
     this.plugin.settings.strip = value;
     await this.plugin.saveData(this.plugin.settings);
   }
 
-  async reset() {
+  private async reset() {
     await this.saveStrip(DEFAULTS.strip);
     this.display();
   }

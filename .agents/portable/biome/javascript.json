@@ -36,12 +36,14 @@
         }
       },
       "style": {
+        "noNonNullAssertion": "error",
         "noNestedTernary": "error",
         "noParameterAssign": "error",
         "noShoutyConstants": "error",
         "useBlockStatements": "error"
       },
       "suspicious": {
+        "noExplicitAny": "error",
         "noShadow": "error"
       },
       "nursery": {

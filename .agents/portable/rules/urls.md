@@ -5,7 +5,7 @@ hand — in a test, in a demo, in a default. It is the exception here, the way
 a comment is, and it has to be justified the same way.
 
 [hardcoded-url.sh](../checks/hardcoded-url.sh) reports every `://` and every
-`scheme="..."` on the `.py` and `.js` lines the working tree added.
+`scheme="..."` on the `.py`, `.js` and `.ts` lines the working tree added.
 Fixtures are data, not code, and are skipped: the project lists their folders
 in `hardcoded-url.ignore`.
 

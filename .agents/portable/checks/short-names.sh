@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Usage: short-names.sh <file>...
-# Reports single-letter names declared in JavaScript: a binding, an arrow
-# parameter, a destructured key. Biome has no equivalent of clippy's
+# Reports single-letter names declared in JavaScript or TypeScript: a binding,
+# an arrow parameter, a destructured key. Biome has no equivalent of clippy's
 # min_ident_chars, so this is that lint. Exits 1 when it reports anything.
 set -uo pipefail
 
@@ -13,7 +13,7 @@ destructured='(const|let|var|for \((const|let)) \[ *[A-Za-z_$] *[],]|, *[A-Za-z_
 
 report=""
 for file in "$@"; do
-  [[ $file == *.js && -f $file ]] || continue
+  [[ ($file == *.js || $file == *.ts) && -f $file ]] || continue
   "$checks/is-ignored.sh" short-names "$file" && continue
   hits=$(grep -nE "$declared|$arrow|$destructured" "$file")
   [[ -n $hits ]] && report+=$(printf '%s\n' "$hits" | sed "s|^|$file:|")$'\n'

@@ -10,7 +10,7 @@ status=0
 for file in "$@"; do
   case $file in
     .agents/*) continue ;;
-    *.rs | *.js | *.py) ;;
+    *.rs | *.js | *.ts | *.py) ;;
     *) continue ;;
   esac
   [[ -f $file ]] || continue

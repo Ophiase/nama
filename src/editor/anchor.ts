@@ -1,20 +1,22 @@
+import type { Editor, EditorPosition, EditorRange } from "obsidian";
+
 const MARKER = /^\s*(?:>\s*)*(?:#{1,6}\s+|(?:[-*+]|\d+[.)])\s+(?:\[.\]\s+)?)?/;
 
-const at = (line, ch) => ({ line, ch });
+const at = (line: number, ch: number): EditorPosition => ({ line, ch });
 
 /** Where the text of `line` starts and ends, past its indent, quote, heading, list or task marker. */
-export function textSpan(line) {
-  const start = line.match(MARKER)[0].length;
+export function textSpan(line: string) {
+  const start = MARKER.exec(line)?.[0].length ?? 0;
   const text = line.slice(start).trimEnd();
   return { start, end: start + text.length };
 }
 
-function lineText(editor, line) {
+function lineText(editor: Editor, line: number): EditorRange {
   const span = textSpan(editor.getLine(line));
   return { from: at(line, span.start), to: at(line, span.end) };
 }
 
-function selected(editor) {
+function selected(editor: Editor): EditorRange {
   const from = editor.getCursor("from");
   const to = editor.getCursor("to");
   const wraps = to.ch === 0 && to.line > from.line;
@@ -23,10 +25,10 @@ function selected(editor) {
   return { from, to: end };
 }
 
-const covers = (range, text) =>
+const covers = (range: EditorRange, text: EditorRange) =>
   range.from.line === range.to.line && range.from.ch <= text.from.ch && range.to.ch >= text.to.ch;
 
-function trimmed(editor, range) {
+function trimmed(editor: Editor, range: EditorRange): EditorRange {
   const text = editor.getRange(range.from, range.to);
   const lead = text.length - text.trimStart().length;
   const start = editor.posToOffset(range.from) + lead;
@@ -34,7 +36,7 @@ function trimmed(editor, range) {
   return { from: editor.offsetToPos(start), to: editor.offsetToPos(end) };
 }
 
-function rangeOf(editor) {
+function rangeOf(editor: Editor) {
   if (!editor.somethingSelected()) {
     return lineText(editor, editor.getCursor().line);
   }
@@ -43,16 +45,26 @@ function rangeOf(editor) {
   return covers(range, own) ? own : trimmed(editor, range);
 }
 
+/** The offsets of a written link: its `(` and its end. */
+export interface Link {
+  paren: number;
+  end: number;
+}
+
 /** The text a link wraps: the selection, or the text of its line when it holds all of it or nothing. */
 export class Anchor {
-  constructor(editor) {
+  readonly editor: Editor;
+  readonly range: EditorRange;
+  readonly text: string;
+
+  constructor(editor: Editor) {
     this.editor = editor;
     this.range = rangeOf(editor);
     this.text = editor.getRange(this.range.from, this.range.to);
   }
 
   /** Writes `[text](url)` and returns the offset of its `(` and of its end. */
-  wrap(url) {
+  wrap(url: string): Link {
     const link = `[${this.text}](${url})`;
     const start = this.editor.posToOffset(this.range.from);
     this.editor.replaceRange(link, this.range.from, this.range.to);

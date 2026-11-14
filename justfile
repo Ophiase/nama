@@ -21,6 +21,7 @@ fmt:
 [doc("Everything that must pass before declaring work done")]
 check:
     npx biome check .
+    npx tsc -p .
     command -v rumdl >/dev/null && rumdl check . || true
 
 [group("dev")]
@@ -39,7 +40,7 @@ _guard check:
 [group("build")]
 [doc("Bundle src/ into dist/main.js")]
 build: check
-    npx esbuild src/main.js --bundle --format=cjs --platform=browser --target=es2022 \
+    npx esbuild src/main.ts --bundle --format=cjs --platform=browser --target=es2022 \
       --external:obsidian --loader:.txt=text --outfile=dist/main.js
 
 [group("build")]

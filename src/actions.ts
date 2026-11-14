@@ -1,25 +1,29 @@
-import { Notice } from "obsidian";
-import { Anchor } from "./editor/anchor.js";
-import { Selection } from "./editor/selection.js";
-import { enterInsert, leaveVisual } from "./editor/vim.js";
-import { fetchCleanTitles } from "./title.js";
-import { bareUrls, linked, soleUrl, urlsIn } from "./urls.js";
+import { type Editor, Notice } from "obsidian";
+import { Anchor } from "./editor/anchor";
+import { Selection } from "./editor/selection";
+import { enterInsert, leaveVisual } from "./editor/vim";
+import { fetchCleanTitles } from "./title";
+import { bareUrls, linked, soleUrl, type UrlSpan, urlsIn } from "./urls";
 
-const say = (message) => new Notice(`Nama: ${message}`);
+const say = (message: string) => new Notice(`Nama: ${message}`);
 
-function count(items, noun) {
+function count(items: readonly unknown[], noun: string) {
   const plural = items.length === 1 ? "" : "s";
   return `${items.length} ${noun}${plural}`;
 }
 
-function outcome(titles) {
+function outcome(titles: readonly string[]) {
   const failed = titles.filter((title) => !title).length;
   const named = titles.length - failed;
   const summary = `${named} named`;
   return failed ? `${summary}, ${failed} failed` : summary;
 }
 
-async function applyTitles(selection, bare, patterns) {
+async function applyTitles(
+  selection: Selection,
+  bare: readonly UrlSpan[],
+  patterns: readonly string[],
+) {
   const titles = await fetchCleanTitles(bare, patterns);
   if (selection.stale) {
     say("text changed, aborted");
@@ -30,7 +34,7 @@ async function applyTitles(selection, bare, patterns) {
   say(outcome(titles));
 }
 
-export async function nameUrls(editor, patterns) {
+export async function nameUrls(editor: Editor, patterns: readonly string[]) {
   const selection = new Selection(editor);
   const bare = bareUrls(selection.text);
   if (bare.length === 0) {
@@ -42,14 +46,14 @@ export async function nameUrls(editor, patterns) {
   await applyTitles(selection, bare, patterns);
 }
 
-async function copy(urls) {
+async function copy(urls: readonly string[]) {
   const lines = urls.join("\n");
   const summary = urls.length === 1 ? urls[0] : count(urls, "URL");
   await navigator.clipboard.writeText(lines);
   say(`copied ${summary}`);
 }
 
-export async function copyUrls(editor, limit) {
+export async function copyUrls(editor: Editor, limit?: number) {
   const selection = new Selection(editor);
   const found = urlsIn(selection.text);
   const urls = found.slice(0, limit);
@@ -65,13 +69,13 @@ async function clipboardUrl() {
   return soleUrl(text);
 }
 
-function placeCursor(editor, offset) {
+function placeCursor(editor: Editor, offset: number) {
   const cursor = editor.offsetToPos(offset);
   editor.setCursor(cursor);
   editor.focus();
 }
 
-export async function insertUrl(editor) {
+export async function insertUrl(editor: Editor) {
   const url = await clipboardUrl();
   const anchor = new Anchor(editor);
   leaveVisual(editor);

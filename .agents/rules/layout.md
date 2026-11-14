@@ -3,7 +3,7 @@
 A folder is a concept, and its entry file (`mod.rs`, `lib.rs`, `main.rs`)
 is its door: what the rest of the code may use, re-exported there.
 
-- **Seven entries at most** in a folder of code (`.rs`, `.js`), files and
+- **Seven entries at most** in a folder of code (`.rs`, `.js`, `.ts`), files and
   folders counted together. Past seven, two concepts share the folder:
   name them and split.
 - **Two hundred lines at most** in a file of code, its test module left
