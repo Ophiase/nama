@@ -1,6 +1,9 @@
 # Nama
 
 [![Kanon](https://img.shields.io/badge/%3C%3E-Kanon-blueviolet.svg)](.agents/kanon.md)
+[![Obsidian](https://img.shields.io/badge/Obsidian-plugin-483699.svg?logo=obsidian&logoColor=white)](manifest.json)
+[![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6.svg?logo=typescript&logoColor=white)](tsconfig.json)
+[![just](https://img.shields.io/badge/just-recipes-EE7700.svg)](justfile)
 
 A simple Obsidian plugin: name the URLs of a selection, strip the noise from their
 titles, copy the URLs out.
