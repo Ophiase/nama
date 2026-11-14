@@ -1,7 +1,8 @@
 // Nama: name the URLs of a selection, copy them out. <>
 import { type Editor, type Menu, type MenuItem, Plugin } from "obsidian";
 import { copyUrls, insertUrl, nameUrls } from "./actions";
-import { DEFAULTS, type NamaSettings, NamaTab, patterns } from "./settings";
+import { DEFAULTS, type NamaSettings, NamaTab } from "./settings";
+import { StripPatterns } from "./title";
 
 interface Action {
   id: string;
@@ -15,7 +16,7 @@ const ACTIONS: readonly Action[] = [
     id: "name-urls",
     name: "Name URLs",
     icon: "link",
-    run: (nama, editor) => nameUrls(editor, patterns(nama.settings)),
+    run: (nama, editor) => nameUrls(editor, StripPatterns.parse(nama.settings.strip)),
   },
   {
     id: "insert-url",

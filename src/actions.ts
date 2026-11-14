@@ -1,6 +1,6 @@
 import { type Editor, Notice } from "obsidian";
 import { enterInsert, leaveVisual, Region } from "./editor";
-import { fetchCleanTitles } from "./title";
+import { fetchCleanTitles, type StripPatterns } from "./title";
 import { bareUrls, linked, soleUrl, type UrlSpan, urlsIn } from "./urls";
 
 const say = (message: string) => new Notice(`Nama: ${message}`);
@@ -17,8 +17,8 @@ function outcome(titles: readonly string[]) {
   return failed ? `${summary}, ${failed} failed` : summary;
 }
 
-async function applyTitles(region: Region, bare: readonly UrlSpan[], patterns: readonly string[]) {
-  const titles = await fetchCleanTitles(bare, patterns);
+async function applyTitles(region: Region, bare: readonly UrlSpan[], strip: StripPatterns) {
+  const titles = await fetchCleanTitles(bare, strip);
   if (region.stale) {
     say("text changed, aborted");
     return;
@@ -28,7 +28,7 @@ async function applyTitles(region: Region, bare: readonly UrlSpan[], patterns: r
   say(outcome(titles));
 }
 
-export async function nameUrls(editor: Editor, patterns: readonly string[]) {
+export async function nameUrls(editor: Editor, strip: StripPatterns) {
   const region = Region.selection(editor);
   const bare = bareUrls(region.text);
   if (bare.length === 0) {
@@ -37,7 +37,7 @@ export async function nameUrls(editor: Editor, patterns: readonly string[]) {
   }
   const total = count(bare, "URL");
   say(`naming ${total}…`);
-  await applyTitles(region, bare, patterns);
+  await applyTitles(region, bare, strip);
 }
 
 async function copy(urls: readonly string[]) {

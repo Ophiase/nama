@@ -1,11 +1,6 @@
 import { requestUrl } from "obsidian";
-import type { UrlSpan } from "./urls";
 
 const YOUTUBE = /(^|\.)(youtube\.com|youtu\.be)$/;
-
-interface OEmbed {
-  title?: string;
-}
 
 function charsetOf(bytes: Uint8Array, contentType: string) {
   const head = new TextDecoder("latin1").decode(bytes.slice(0, 4096));
@@ -25,12 +20,16 @@ function decode(buffer: ArrayBuffer, contentType = "") {
   }
 }
 
+function titleOf(body: unknown) {
+  const title = typeof body === "object" && body !== null && "title" in body ? body.title : null;
+  return typeof title === "string" ? title : "";
+}
+
 async function youtubeTitle(url: string) {
   const endpoint = "https://www.youtube.com/oembed"; // hardcoded-url: YouTube's one public oEmbed endpoint
   const query = new URLSearchParams({ format: "json", url });
   const response = await requestUrl({ url: `${endpoint}?${query}` });
-  const body: OEmbed = response.json;
-  return body.title ?? "";
+  return titleOf(response.json);
 }
 
 async function pageTitle(url: string) {
@@ -38,33 +37,8 @@ async function pageTitle(url: string) {
   const html = decode(response.arrayBuffer, response.headers["content-type"]);
   const doc = new DOMParser().parseFromString(html, "text/html");
   const og = doc.querySelector('meta[property="og:title"]')?.getAttribute("content");
-  return (og || doc.title || "").trim();
+  return og || doc.title || "";
 }
 
 export const fetchTitle = (url: string) =>
   YOUTUBE.test(new URL(url).hostname) ? youtubeTitle(url) : pageTitle(url);
-
-/** Strip every pattern, normalize, escape what would break a markdown link. */
-export function cleanTitle(title: string, patterns: readonly string[]) {
-  let clean = title.normalize("NFC");
-  for (const pattern of patterns) {
-    try {
-      clean = clean.replace(new RegExp(pattern, "giu"), "");
-    } catch {
-      // an invalid pattern is skipped, not fatal
-    }
-  }
-  return clean.replace(/\s+/g, " ").trim().replace(/[[\]]/g, "\\$&");
-}
-
-async function fetchCleanTitle(url: string, patterns: readonly string[]) {
-  try {
-    return cleanTitle(await fetchTitle(url), patterns);
-  } catch {
-    return "";
-  }
-}
-
-/** The cleaned title of each span, or "" where fetching it failed. */
-export const fetchCleanTitles = (spans: readonly UrlSpan[], patterns: readonly string[]) =>
-  Promise.all(spans.map((span) => fetchCleanTitle(span.url, patterns)));

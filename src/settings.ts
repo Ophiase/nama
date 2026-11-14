@@ -6,19 +6,13 @@ import {
   type TextAreaComponent,
 } from "obsidian";
 import type Nama from "./main";
-import strip from "./strip-patterns.txt";
+import { StripPatterns } from "./title";
 
 export interface NamaSettings {
   strip: string;
 }
 
-export const DEFAULTS: Readonly<NamaSettings> = { strip: strip.trim() };
-
-export const patterns = (settings: NamaSettings) =>
-  settings.strip
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
+export const DEFAULTS: Readonly<NamaSettings> = { strip: StripPatterns.defaults };
 
 export class NamaTab extends PluginSettingTab {
   constructor(
