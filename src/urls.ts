@@ -53,3 +53,6 @@ export function soleUrl(text: string): string | null {
 const unnamed = (span: UrlSpan) => span.form === "bare" || span.form === "angled";
 
 export const bareUrls = (text: string) => findUrls(text).filter(unnamed);
+
+export const notEmbedded = (text: string) =>
+  findUrls(text).filter((span) => span.form !== "embedded");

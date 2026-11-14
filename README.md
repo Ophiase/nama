@@ -14,6 +14,7 @@ selected; each is also in the editor's context menu.
 | --- | --- |
 | Name URLs | every bare URL becomes `[title](url)` |
 | Insert URL | the text becomes `[text](url)` with the clipboard's URL; without one, the cursor waits in `()`, in insert mode under vim |
+| Enrich URLs | every URL not yet embedded becomes `![name](url)`, which Obsidian renders: a YouTube video, a tweet, an image; on a line without one, `![](url)` with the clipboard's URL is inserted at the cursor |
 | Copy first URL | the first URL, named or bare, to the clipboard |
 | Copy all URLs | every URL, one per line |
 

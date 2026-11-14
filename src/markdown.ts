@@ -8,6 +8,8 @@ export interface Edit {
 
 export const link = (name: string, url: string) => `[${name}](${url})`;
 
+export const embed = (name: string, url: string) => `!${link(name, url)}`;
+
 /** The offset of the `(` in `link(name, url)`. */
 export const parenOf = (name: string) => name.length + 2;
 
