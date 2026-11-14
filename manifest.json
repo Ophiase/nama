@@ -2,8 +2,8 @@
   "id": "nama",
   "name": "Nama",
   "version": "0.1.0",
-  "minAppVersion": "1.4.0",
-  "description": "Name the URLs of a selection, strip the noise from their titles, copy the URLs out. <>",
+  "minAppVersion": "1.14.0",
+  "description": "Name the URLs of a selection with their page titles, embed them, copy them out.",
   "author": "Phorcys",
   "isDesktopOnly": false
 }

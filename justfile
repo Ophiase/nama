@@ -54,3 +54,34 @@ install: build
     mkdir -p "$target"
     cp dist/main.js manifest.json "$target/"
     echo "installed: reload Obsidian"
+
+[group("release")]
+[doc("The CHANGELOG.md section of a version, without its heading")]
+notes version:
+    @awk '/^## / { inside = ($2 == "{{ version }}"); next } inside' CHANGELOG.md
+
+[group("release")]
+[doc("Set the version in every manifest, commit and tag it; pushing the tag publishes a draft")]
+[script("bash")]
+release version:
+    set -euo pipefail
+    [[ "{{ version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "a version is x.y.z, without v" >&2; exit 1; }
+    [[ -z "$(git status --porcelain)" ]] || { echo "commit or stash first" >&2; exit 1; }
+    [[ -n "$(just notes {{ version }})" ]] || { echo "CHANGELOG.md has no section {{ version }}" >&2; exit 1; }
+    npm version "{{ version }}" --no-git-tag-version --allow-same-version >/dev/null
+    node -e '
+      const fs = require("node:fs");
+      const read = (file) => JSON.parse(fs.readFileSync(file, "utf8"));
+      const write = (file, data) => fs.writeFileSync(file, `${JSON.stringify(data, null, 2)}\n`);
+      const manifest = read("manifest.json");
+      const versions = read("versions.json");
+      manifest.version = process.argv[1];
+      versions[manifest.version] = manifest.minAppVersion;
+      write("manifest.json", manifest);
+      write("versions.json", versions);
+    ' "{{ version }}"
+    just agent gate
+    git add manifest.json versions.json package.json package-lock.json
+    git diff --cached --quiet || git commit -q -m "release: {{ version }}"
+    git tag -a "{{ version }}" -m "{{ version }}"
+    echo "tagged {{ version }}: git push origin main {{ version }} publishes the draft release"

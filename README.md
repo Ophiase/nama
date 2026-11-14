@@ -26,7 +26,17 @@ marker when the whole line is selected, or nothing is.
 
 The strip patterns are regexes, one per line, in the settings.
 
+## Network
+
+Name URLs is the one command that goes online: it downloads each page it
+names to read its title, or asks YouTube's oEmbed endpoint for a video's.
+Nothing else is sent anywhere, and nothing is collected.
+
 ## Install
+
+From Obsidian: Settings → Community plugins → Browse → Nama.
+
+From the sources, into the vault `.env` names:
 
 ```sh
 cp .env.example .env    # set NAMA_VAULT
