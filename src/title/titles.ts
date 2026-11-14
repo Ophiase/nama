@@ -2,17 +2,25 @@ import type { UrlSpan } from "../urls";
 import { fetchTitle } from "./fetch";
 import type { StripPatterns } from "./strip";
 
-const escaped = (title: string) => title.replace(/[[\]]/g, "\\$&");
+/** A span and the title of its URL, or null where none was found. */
+export interface Titled {
+  readonly span: UrlSpan;
+  readonly title: string | null;
+}
 
-async function fetchCleanTitle(url: string, strip: StripPatterns) {
+async function cleanTitle(url: string, strip: StripPatterns) {
   try {
     const title = await fetchTitle(url);
-    return escaped(strip.clean(title));
+    return strip.clean(title) || null;
   } catch {
-    return "";
+    return null;
   }
 }
 
-/** The cleaned title of each span, or "" where fetching it failed. */
-export const fetchCleanTitles = (spans: readonly UrlSpan[], strip: StripPatterns) =>
-  Promise.all(spans.map((span) => fetchCleanTitle(span.url, strip)));
+async function titled(span: UrlSpan, strip: StripPatterns): Promise<Titled> {
+  const title = await cleanTitle(span.url, strip);
+  return { span, title };
+}
+
+export const fetchTitles = (spans: readonly UrlSpan[], strip: StripPatterns) =>
+  Promise.all(spans.map((span) => titled(span, strip)));

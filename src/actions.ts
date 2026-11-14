@@ -1,7 +1,8 @@
 import { type Editor, Notice } from "obsidian";
 import { enterInsert, leaveVisual, Region } from "./editor";
-import { fetchCleanTitles, type StripPatterns } from "./title";
-import { bareUrls, linked, soleUrl, type UrlSpan, urlsIn } from "./urls";
+import { type Edit, escaped, link, parenOf, rewrite } from "./markdown";
+import { fetchTitles, type StripPatterns, type Titled } from "./title";
+import { bareUrls, soleUrl, type UrlSpan, urlsIn } from "./urls";
 
 const say = (message: string) => new Notice(`Nama: ${message}`);
 
@@ -10,22 +11,26 @@ function count(items: readonly unknown[], noun: string) {
   return `${items.length} ${noun}${plural}`;
 }
 
-function outcome(titles: readonly string[]) {
-  const failed = titles.filter((title) => !title).length;
-  const named = titles.length - failed;
+function outcome(titled: readonly Titled[]) {
+  const failed = titled.filter(({ title }) => title === null).length;
+  const named = titled.length - failed;
   const summary = `${named} named`;
   return failed ? `${summary}, ${failed} failed` : summary;
 }
 
+const linkEdit = ({ span, title }: Titled): Edit[] =>
+  title === null ? [] : [{ span, written: link(escaped(title), span.url) }];
+
 async function applyTitles(region: Region, bare: readonly UrlSpan[], strip: StripPatterns) {
-  const titles = await fetchCleanTitles(bare, strip);
+  const titled = await fetchTitles(bare, strip);
   if (region.stale) {
     say("text changed, aborted");
     return;
   }
-  const named = linked(region.text, bare, titles);
+  const edits = titled.flatMap(linkEdit);
+  const named = rewrite(region.text, edits);
   region.replace(named);
-  say(outcome(titles));
+  say(outcome(titled));
 }
 
 export async function nameUrls(editor: Editor, strip: StripPatterns) {
@@ -67,12 +72,12 @@ export async function insertUrl(editor: Editor) {
   const url = await clipboardUrl();
   const anchor = Region.anchor(editor);
   leaveVisual(editor);
-  const link = `[${anchor.text}](${url ?? ""})`;
-  anchor.replace(link);
+  const written = link(anchor.text, url ?? "");
+  anchor.replace(written);
   if (url) {
-    anchor.moveCursor(link.length);
+    anchor.moveCursor(written.length);
     return;
   }
-  anchor.moveCursor(anchor.text.length + 2);
+  anchor.moveCursor(parenOf(anchor.text));
   enterInsert(editor);
 }

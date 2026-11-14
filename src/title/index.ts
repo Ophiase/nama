@@ -1,2 +1,2 @@
 export { StripPatterns } from "./strip";
-export { fetchCleanTitles } from "./titles";
+export { fetchTitles, type Titled } from "./titles";
