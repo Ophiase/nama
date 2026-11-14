@@ -21,11 +21,11 @@ export const patterns = (settings: NamaSettings) =>
     .filter(Boolean);
 
 export class NamaTab extends PluginSettingTab {
-  private readonly plugin: Nama;
-
-  constructor(app: App, plugin: Nama) {
+  constructor(
+    app: App,
+    private readonly plugin: Nama,
+  ) {
     super(app, plugin);
-    this.plugin = plugin;
   }
 
   override display() {

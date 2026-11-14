@@ -1,7 +1,5 @@
 import { type Editor, Notice } from "obsidian";
-import { Anchor } from "./editor/anchor";
-import { Selection } from "./editor/selection";
-import { enterInsert, leaveVisual } from "./editor/vim";
+import { enterInsert, leaveVisual, Region } from "./editor";
 import { fetchCleanTitles } from "./title";
 import { bareUrls, linked, soleUrl, type UrlSpan, urlsIn } from "./urls";
 
@@ -19,31 +17,27 @@ function outcome(titles: readonly string[]) {
   return failed ? `${summary}, ${failed} failed` : summary;
 }
 
-async function applyTitles(
-  selection: Selection,
-  bare: readonly UrlSpan[],
-  patterns: readonly string[],
-) {
+async function applyTitles(region: Region, bare: readonly UrlSpan[], patterns: readonly string[]) {
   const titles = await fetchCleanTitles(bare, patterns);
-  if (selection.stale) {
+  if (region.stale) {
     say("text changed, aborted");
     return;
   }
-  const named = linked(selection.text, bare, titles);
-  selection.replace(named);
+  const named = linked(region.text, bare, titles);
+  region.replace(named);
   say(outcome(titles));
 }
 
 export async function nameUrls(editor: Editor, patterns: readonly string[]) {
-  const selection = new Selection(editor);
-  const bare = bareUrls(selection.text);
+  const region = Region.selection(editor);
+  const bare = bareUrls(region.text);
   if (bare.length === 0) {
     say("no bare URL");
     return;
   }
   const total = count(bare, "URL");
   say(`naming ${total}…`);
-  await applyTitles(selection, bare, patterns);
+  await applyTitles(region, bare, patterns);
 }
 
 async function copy(urls: readonly string[]) {
@@ -54,8 +48,8 @@ async function copy(urls: readonly string[]) {
 }
 
 export async function copyUrls(editor: Editor, limit?: number) {
-  const selection = new Selection(editor);
-  const found = urlsIn(selection.text);
+  const region = Region.selection(editor);
+  const found = urlsIn(region.text);
   const urls = found.slice(0, limit);
   if (urls.length === 0) {
     say("no URL");
@@ -69,21 +63,16 @@ async function clipboardUrl() {
   return soleUrl(text);
 }
 
-function placeCursor(editor: Editor, offset: number) {
-  const cursor = editor.offsetToPos(offset);
-  editor.setCursor(cursor);
-  editor.focus();
-}
-
 export async function insertUrl(editor: Editor) {
   const url = await clipboardUrl();
-  const anchor = new Anchor(editor);
+  const anchor = Region.anchor(editor);
   leaveVisual(editor);
-  const link = anchor.wrap(url ?? "");
+  const link = `[${anchor.text}](${url ?? ""})`;
+  anchor.replace(link);
   if (url) {
-    placeCursor(editor, link.end);
+    anchor.moveCursor(link.length);
     return;
   }
-  placeCursor(editor, link.paren);
+  anchor.moveCursor(anchor.text.length + 2);
   enterInsert(editor);
 }

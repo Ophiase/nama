@@ -4,8 +4,7 @@ const MARKER = /^\s*(?:>\s*)*(?:#{1,6}\s+|(?:[-*+]|\d+[.)])\s+(?:\[.\]\s+)?)?/;
 
 const at = (line: number, ch: number): EditorPosition => ({ line, ch });
 
-/** Where the text of `line` starts and ends, past its indent, quote, heading, list or task marker. */
-export function textSpan(line: string) {
+function textSpan(line: string) {
   const start = MARKER.exec(line)?.[0].length ?? 0;
   const text = line.slice(start).trimEnd();
   return { start, end: start + text.length };
@@ -36,7 +35,15 @@ function trimmed(editor: Editor, range: EditorRange): EditorRange {
   return { from: editor.offsetToPos(start), to: editor.offsetToPos(end) };
 }
 
-function rangeOf(editor: Editor) {
+export function selectionRange(editor: Editor): EditorRange {
+  if (editor.somethingSelected()) {
+    return { from: editor.getCursor("from"), to: editor.getCursor("to") };
+  }
+  const { line } = editor.getCursor();
+  return { from: at(line, 0), to: at(line, editor.getLine(line).length) };
+}
+
+export function anchorRange(editor: Editor): EditorRange {
   if (!editor.somethingSelected()) {
     return lineText(editor, editor.getCursor().line);
   }
@@ -45,30 +52,7 @@ function rangeOf(editor: Editor) {
   return covers(range, own) ? own : trimmed(editor, range);
 }
 
-/** The offsets of a written link: its `(` and its end. */
-export interface Link {
-  paren: number;
-  end: number;
-}
-
-/** The text a link wraps: the selection, or the text of its line when it holds all of it or nothing. */
-export class Anchor {
-  readonly editor: Editor;
-  readonly range: EditorRange;
-  readonly text: string;
-
-  constructor(editor: Editor) {
-    this.editor = editor;
-    this.range = rangeOf(editor);
-    this.text = editor.getRange(this.range.from, this.range.to);
-  }
-
-  /** Writes `[text](url)` and returns the offset of its `(` and of its end. */
-  wrap(url: string): Link {
-    const link = `[${this.text}](${url})`;
-    const start = this.editor.posToOffset(this.range.from);
-    this.editor.replaceRange(link, this.range.from, this.range.to);
-    const paren = start + this.text.length + 2;
-    return { paren, end: start + link.length };
-  }
+export function cursorRange(editor: Editor): EditorRange {
+  const cursor = editor.getCursor();
+  return { from: cursor, to: cursor };
 }
