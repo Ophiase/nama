@@ -45,8 +45,10 @@ neither is loosened locally. A type the Obsidian API lacks is declared, as in
 - `just agent gate` is the one command to declare work done: `just check`,
   then `just guards`.
 - `just fmt` fixes the formatting; `just build` bundles; `just install`
-  copies the bundle into `$NAMA_VAULT`, which comes from `.env` and is run by
-  the author.
+  copies the bundle into `$NAMA_VAULT`, which comes from `.env`.
+- A change to the plugin that passes the gate is installed right away, so the
+  author can try it: the `update-in-obsidian` skill finds the vault when `.env`
+  does not name it.
 - `just install-hooks` once: every commit runs `just guards`.
 
 ## Never

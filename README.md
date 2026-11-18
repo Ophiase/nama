@@ -16,6 +16,7 @@ selected; each is also in the editor's context menu.
 | Command | Effect |
 | --- | --- |
 | Name URLs | every bare URL becomes `[title](url)` |
+| Replace URLs | every URL not embedded becomes `[title](url)`, named links included: their name is replaced by the page's title |
 | Insert URL | the text becomes `[text](url)` with the clipboard's URL; without one, the cursor waits in `()`, in insert mode under vim |
 | Enrich URLs | every URL not yet embedded becomes `![name](url)`, which Obsidian renders: a YouTube video, a tweet, an image; on a line without one, `![](url)` with the clipboard's URL is inserted at the cursor |
 | Copy first URL | the first URL, named or bare, to the clipboard |
@@ -28,8 +29,9 @@ The strip patterns are regexes, one per line, in the settings.
 
 ## Network
 
-Name URLs is the one command that goes online: it downloads each page it
-names to read its title, or asks YouTube's oEmbed endpoint for a video's.
+Name URLs and Replace URLs are the only commands that go online: they
+download each page they name to read its title, or ask YouTube's oEmbed
+endpoint for a video's.
 Nothing else is sent anywhere, and nothing is collected.
 
 ## Install

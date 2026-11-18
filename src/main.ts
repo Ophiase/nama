@@ -1,6 +1,6 @@
 // Nama: name the URLs of a selection, copy them out. <>
 import { type Editor, type Menu, type MenuItem, Plugin } from "obsidian";
-import { copyUrls, enrichUrls, insertUrl, nameUrls } from "./actions";
+import { copyUrls, enrichUrls, insertUrl, nameUrls, replaceUrls } from "./actions";
 import { type NamaSettings, NamaTab, settingsFrom } from "./settings";
 import { StripPatterns } from "./title";
 
@@ -22,6 +22,12 @@ const ACTIONS: readonly Action[] = [
     name: "Name URLs",
     icon: "link",
     run: ({ editor, strip }) => nameUrls(editor, strip),
+  },
+  {
+    id: "replace-urls",
+    name: "Replace URLs",
+    icon: "refresh-cw",
+    run: ({ editor, strip }) => replaceUrls(editor, strip),
   },
   {
     id: "insert-url",
